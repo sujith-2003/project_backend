@@ -5,8 +5,7 @@ import Attendance from "../models/attendance.model.js";
 ========================= */
 export const getTodayAttendance = async (req, res) => {
   try {
-    // ✅ FIXED
-    const userId = req.userId;
+    const userId = req.user._id; // ✅ FIX
 
     const today = new Date().toISOString().split("T")[0];
 
@@ -19,7 +18,7 @@ export const getTodayAttendance = async (req, res) => {
     res.json(record.attendance.get(today) || null);
   } catch (err) {
     console.error("getTodayAttendance error:", err);
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -28,8 +27,7 @@ export const getTodayAttendance = async (req, res) => {
 ========================= */
 export const toggleAttendance = async (req, res) => {
   try {
-    // ✅ FIXED
-    const userId = req.userId;
+    const userId = req.user._id; // ✅ FIX
 
     const today = new Date().toISOString().split("T")[0];
     const now = new Date().toISOString();
@@ -64,20 +62,19 @@ export const toggleAttendance = async (req, res) => {
     record.attendance.set(today, todayData);
     await record.save();
 
-    res.json(todayData);
+    res.status(200).json(todayData);
   } catch (err) {
     console.error("toggleAttendance error:", err);
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
 /* =========================
-   UPDATE WORKED TIME (TIMER)
+   UPDATE WORKED TIME
 ========================= */
 export const updateWorkedTime = async (req, res) => {
   try {
-    // ✅ FIXED
-    const userId = req.userId;
+    const userId = req.user._id; // ✅ FIX
 
     const today = new Date().toISOString().split("T")[0];
     const { workedTime } = req.body;
@@ -97,6 +94,6 @@ export const updateWorkedTime = async (req, res) => {
     res.json(todayData);
   } catch (err) {
     console.error("updateWorkedTime error:", err);
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Server error" });
   }
 };

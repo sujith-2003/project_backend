@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
-import Token from "../models/token.model.js";
 
 /* =========================
    REGISTER
@@ -31,7 +30,7 @@ export const register = async (req, res) => {
 };
 
 /* =========================
-   LOGIN (JWT ONLY)
+   LOGIN (JWT)
 ========================= */
 export const login = async (req, res) => {
   try {
@@ -55,10 +54,10 @@ export const login = async (req, res) => {
       }
     );
 
-    res.json({
+    res.status(200).json({
       token,
       user: {
-        id: user._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
       },
@@ -70,12 +69,12 @@ export const login = async (req, res) => {
 };
 
 /* =========================
-   LOGOUT (CLIENT SIDE)
+   LOGOUT
 ========================= */
 export const logout = async (req, res) => {
   try {
-    // JWT logout handled on client by removing token
-    res.json({ message: "Logged out successfully" });
+    // JWT logout handled on client side
+    res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.error("LOGOUT ERROR:", error);
     res.status(500).json({ message: "Server error" });
@@ -83,20 +82,16 @@ export const logout = async (req, res) => {
 };
 
 /* =========================
-   VERIFY SESSION
+   VERIFY SESSION (FIXED 🔥)
 ========================= */
 export const verify = async (req, res) => {
   try {
-    // req.userId must be set by auth middleware
-    const user = await User.findById(req.userId).select("-password");
-
-    if (!user) {
-      return res.status(401).json({ message: "Invalid session" });
-    }
-
-    res.json({ user });
+    // 🔥 user already validated & attached by auth middleware
+    res.status(200).json({
+      user: req.user,
+    });
   } catch (error) {
     console.error("VERIFY ERROR:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(401).json({ message: "Invalid session" });
   }
 };
