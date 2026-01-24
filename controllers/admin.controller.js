@@ -7,10 +7,14 @@ import Attendance from "../models/attendance.model.js";
 export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find().select("-password");
-    res.json({ users });
+
+    res.status(200).json({
+      users, // ✅ frontend expects this
+    });
   } catch (error) {
-    console.error("GET ALL USERS ERROR:", error);
-    res.status(500).json({ message: "Failed to fetch users" });
+    res.status(500).json({
+      message: "Failed to fetch users",
+    });
   }
 };
 
@@ -19,17 +23,16 @@ export const getAllUsers = async (req, res) => {
 ========================= */
 export const getUserAttendance = async (req, res) => {
   try {
-    const { id } = req.params;
+    const attendance = await Attendance.find({
+      user: req.params.id,
+    });
 
-    const record = await Attendance.findOne({ userId: id });
-
-    const attendance = record
-      ? Array.from(record.attendance.values())
-      : [];
-
-    res.json({ attendance });
+    res.status(200).json({
+      attendance, // ✅ frontend expects this
+    });
   } catch (error) {
-    console.error("GET USER ATTENDANCE ERROR:", error);
-    res.status(500).json({ message: "Failed to fetch attendance" });
+    res.status(500).json({
+      message: "Failed to fetch attendance",
+    });
   }
 };

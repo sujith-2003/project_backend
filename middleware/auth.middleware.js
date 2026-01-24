@@ -19,7 +19,7 @@ const protect = async (req, res, next) => {
       return res.status(401).json({ message: "User not found" });
     }
 
-    req.user = user;
+    req.user = user; // ✅ attach user
     next();
   } catch (error) {
     console.error("AUTH ERROR:", error.message);
